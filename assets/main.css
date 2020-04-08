@@ -1,0 +1,44 @@
+body{
+    background-color: white;
+    font-family: Montserrat;
+}
+img{
+    width: 100%;
+    border-radius: 5px 5px 0 0;
+}
+.footer{
+    text-align: center;
+    margin-top: 4.8em;
+    background-color: rgb(46, 162, 190); /* This is Cloud Cafe Blue */
+    height: 3em;
+    width: 100%;
+}
+.banner{
+    padding-bottom: 25px;
+    padding-top: 25px;
+    background-color: rgb(46, 162, 190);
+    text-align: center;
+}
+h3 {
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+}
+h5 {
+    text-align: center;
+}
+.card{
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-right: 3em;
+    background-color: rgb(46, 162, 190);
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    width: 25%;
+}
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
+  }
+.container {
+    padding: 2px 16px;
+}
