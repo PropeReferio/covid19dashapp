@@ -8,6 +8,8 @@ from about import AboutPage
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.UNITED])
 
+server = app.server
+
 app.config.suppress_callback_exceptions = True
 #The above is simply for interactive layouts, can probably remove it
 
