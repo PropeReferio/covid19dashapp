@@ -2,9 +2,6 @@ import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-from navbar import Navbar
-
-nav = Navbar()
 
 body = html.Div([
     html.H1('Fundraiser: Supplying PPE for Frontline Healthcare Professionals'),
@@ -12,7 +9,7 @@ body = html.Div([
     html.P(['Our teams at Cloudcafe and Coding Temple are raising funds here to donate directly to the following campaign: ',
     html.A('PPE for Frontline Healthcare Professionals', href='https://www.gofundme.com/f/ppe-for-frontline-healthcare-professionals',
         target='blank', rel='noopener')]),
-    html.P(['This fundraiser has been organized by Sonny Tai, the CEO of&nbsp; ',
+    html.P(['This fundraiser has been organized by Sonny Tai, the CEO of ',
     html.A('Actuate AI', href='https://actuate.ai/',
         target='blank', rel='noopener'),
         '. Sonny is a former Marine and University of Chicago Booth grad. He describes his mission for his fundraiser as the following:']),
@@ -43,6 +40,5 @@ body = html.Div([
 
 def AboutPage():
     layout = html.Div([
-    nav,
     body])
     return layout

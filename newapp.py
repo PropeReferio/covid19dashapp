@@ -10,9 +10,6 @@ from plotly.colors import n_colors
 from pandas import DataFrame as df
 import pandas as pd
 import numpy as np
-from navbar import Navbar
-
-nav = Navbar()
 
 
 #These are CSVs turned Pandas Dataframes
@@ -21,6 +18,7 @@ deaths = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/
 recovered = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv')
 global_pop = pd.read_csv('population_by_country_2020.csv')
 latest_date = confirmed.columns[-1]
+
 
 
 def names_column(frame):
@@ -47,8 +45,14 @@ def trend_colors(frame):
     which apply to tables'''
     colors = []
     for i in range(len(frame)):
-        if frame.iloc[i]['Percent Change'] >= 0:
-            colors.append(int(frame.iloc[i]['Percent Change']//10)+10)
+        if frame.iloc[i]['Percent Change'] == -100:
+            colors.append(9)
+        elif frame.iloc[i]['Percent Change'] >= 0:
+            value = int(frame.iloc[i]['Percent Change']//10)+10
+            if value <= 19:
+                colors.append(value)
+            else:
+                colors.append(19)
         else:
             colors.append(int(frame.iloc[i]['Percent Change']//-10))
     return colors
@@ -92,6 +96,7 @@ clean_state_conf.insert(0, 'new_latest', clean_state_conf.iloc[:,-1] - clean_sta
 clean_state_conf.insert(0, 'new_second_latest', clean_state_conf.iloc[:,-2] - clean_state_conf.iloc[:,-3])
 state_map = clean_state_conf # Data for MAP is cleaned no further beyond this line.
 state_trend = clean_state_conf[clean_state_conf['new_second_latest'] > 0]
+state_trend[latest_date] = state_trend.apply(lambda x: "{:,}".format(x[latest_date]), axis=1)
 state_trend.insert(0, 'Percent Change', (state_trend['new_latest'] / state_trend['new_second_latest'] - 1) * 100)
 state_trend = state_trend.sort_values(by=['Percent Change'])
 st_colors = trend_colors(state_trend)
@@ -113,16 +118,21 @@ new_cases_columns(confirmed)
 new_cases_columns(deaths)
 global_trends = confirmed[confirmed[latest_date] > 1000][['Name', 'Percent Change', latest_date]].dropna().sort_values(by='Percent Change')
 global_trends = global_trends[global_trends['Percent Change'].between(-100,100, inclusive=False)]
+#This adds commas to data
+global_trends[latest_date] = global_trends.apply(lambda x: "{:,}".format(x[latest_date]), axis=1)
 #Add table colors before adding percent sign:
 
 gt_colors = trend_colors(global_trends)
 global_trends['Percent Change'] = global_trends['Percent Change'].astype(str) + '%'
 flattening_curve = confirmed[confirmed[latest_date]>1000].sort_values(by=['Percent Change'])[['Name','Percent Change']]
-##flattening_curve = flattening_curve[(flattening_curve['Percent Change']<100) & (flattening_curve['Percent Change']>-100)]
-# The line above only shows percent changes between 100% and -100%   I think this isn't being used anywhere
+#This adds commas to data: 
+recovered[latest_date] = recovered.apply(lambda x: "{:,}".format(x[latest_date]), axis=1)
 conf_recov = confirmed.join(recovered.set_index('Name')[latest_date],
 on=['Name'], rsuffix='_recoveries').sort_values(by=latest_date,
 ascending=False)
+#This adds commas to data: 
+conf_recov[latest_date] = conf_recov.apply(lambda x: "{:,}".format(x[latest_date]), axis=1)
+# conf_recov[latest_date+'_recoveries'] = conf_recov.apply(lambda x: "{:,}".format(x[latest_date+'_recoveries']), axis=1)
 conf_pop = confirmed.join(global_pop.set_index('Country')['Population'],
 on=['Name']).sort_values(by=latest_date, ascending=False)
 conf_pop['Percent Infected'] = round(conf_pop[latest_date]/conf_pop['Population']*100, 3)
@@ -131,64 +141,6 @@ conf_pop['Percent Infected'] = conf_pop['Percent Infected'].astype(str) + '%'
 # df['Percent'] = df['Grade'].astype(str) + '%'
 us_only_conf = confirmed[confirmed['Name'] == 'US']
 us_only_deaths = deaths[deaths['Name'] == 'US']
-
-fig2 = go.Figure(data=[go.Table(
-    header=dict(values=['<b>Country/Region</b>','<b>Confirmed Cases</b>',
-     '<b>Recoveries</b>', '<b>% of Total Population Infected</b>'],
-                line_color='darkslategray',
-                fill_color='rgb(46, 162, 190)',
-                align='center',
-                font=dict(color='black', size=28)),
-    cells=dict(values=[conf_recov['Name'],
-                       conf_recov[latest_date], # 1st column
-                       conf_recov[latest_date+'_recoveries'],
-                       conf_pop['Percent Infected']],
-               line_color='darkslategray',
-               fill_color=['lightcyan','lightcyan','lightcyan','lightcyan'],
-               align='center',
-               font=dict(color='black', size=20),
-               height=30,
-               ))
-])
-fig2.update_layout(height=600)
-#Figure of Percent change in new cases by Nation
-fig3 = go.Figure(data=[go.Table(
-    header=dict(values=['<b>Country</b>','<b>Confirmed Cases</b>',
-    '<b>% Change of New Daily Cases</b>'],
-                line_color='darkslategray',
-                fill_color='rgb(46, 162, 190)',
-                align='center',
-                font=dict(color='black', size=28)),
-    cells=dict(values=[global_trends['Name'],
-                       global_trends.iloc[:,-1],
-                       global_trends['Percent Change']],
-               line_color='darkslategray',
-               fill_color=['lightcyan','lightcyan',
-               np.array(all_colors)[gt_colors]],
-               align='center',
-               font=dict(color='black', size=20),
-               height=30))])
-
-fig3.update_layout(height=600, plot_bgcolor='lightcyan')
-#Figure of Percent change in new cases by State
-fig4 = go.Figure(data=[go.Table(
-    header=dict(values=['<b>State</b>','<b>Confirmed Cases</b>',
-    '<b>% Change of New Daily Cases</b>'],
-                line_color='darkslategray',
-                fill_color='rgb(46, 162, 190)',
-                align='center',
-                font=dict(color='black', size=28)),
-    cells=dict(values=[state_trend['State'],
-                       state_trend.iloc[:,-1],
-                       state_trend['Percent Change']], # 2nd column
-               line_color='darkslategray',
-               fill_color=['lightcyan','lightcyan','lightcyan'],
-            #    np.array(all_colors)[st_colors]], Index error
-               align='center',
-               font=dict(color='black', size=20),
-               height=30))])
-
-fig4.update_layout(height=600)
 
 #US Chloropleth Map a
 fig = go.Figure(data=go.Choropleth(
@@ -204,9 +156,9 @@ fig = go.Figure(data=go.Choropleth(
 ))
 
 fig.update_layout(
-    autosize=False,
-    width=1800,
-    height=1200,
+    autosize=True,
+    # width=1800,
+    # height=1200,
     margin=dict(
         l=4,
         r=0,
@@ -216,14 +168,14 @@ fig.update_layout(
     ),
     title_text='Confirmed Cases by State',
     title={
-        'y':0.9,
+        'y':0.95,
         'x':0.5,
         'xanchor': 'center',
         'yanchor': 'top'
         },
     titlefont=dict(
         family='Montserrat',
-        size=50,
+        size=26,
         color='#7f7f7f'
     ),
     geo = dict(
@@ -233,89 +185,110 @@ fig.update_layout(
         lakecolor='rgb(255, 255, 255)'),
 )
 
-# nav = dbc.Nav(
-#     [
-#         dbc.NavItem(dbc.NavLink("Logo", active=True, href="#")),
-#         dbc.NavItem(dbc.NavLink("Data", href="#")),
-#         dbc.NavItem(dbc.NavLink("About", href="/about/")),
-#         dbc.NavItem(dbc.NavLink("Donate(Button)", href="#"))
-#     ], style={'font-family': 'Montserrat, arial, sans-serif'}
-# )
+fig2 = go.Figure(data=[go.Table(
+    header=dict(values=['<b>Country/Region</b>','<b>Confirmed Cases</b>',
+     '<b>Recoveries</b>', '<b>% of Total Population Infected</b>'],
+                line_color='darkslategray',
+                fill_color='rgb(46, 162, 190)',
+                align='center',
+                font=dict(family='Montserrat', color='black', size=16)),
+    cells=dict(values=[conf_recov['Name'],
+                       conf_recov[latest_date], # 1st column
+                       conf_recov[latest_date+'_recoveries'],
+                       conf_pop['Percent Infected']],
+               line_color='darkslategray',
+               fill_color=['lightcyan','lightcyan','lightcyan','lightcyan'],
+               align='center',
+               font=dict(family='Montserrat', color='black', size=20),
+               height=30,
+               ))
+])
+fig2.update_layout(
+    height=600,
+    margin=dict(l=0, r=0, t=10, b=30),
+    )
+#Figure of Percent change in new cases by Nation
+fig3 = go.Figure(data=[go.Table(
+    header=dict(values=['<b>Country/Region</b>','<b>Confirmed Cases</b>',
+    '<b>% Change of New Daily Cases</b>'],
+                line_color='darkslategray',
+                fill_color='rgb(46, 162, 190)',
+                align='center',
+                font=dict(family='Montserrat', color='black', size=16)),
+    cells=dict(values=[global_trends['Name'],
+                       global_trends.iloc[:,-1],
+                       global_trends['Percent Change']],
+               line_color='darkslategray',
+               fill_color=['lightcyan','lightcyan',
+               np.array(all_colors)[gt_colors]],
+               align='center',
+               font=dict(family='Montserrat', color='black', size=20),
+               height=30))])
 
-banner = html.Div(
-    [
-        html.P(
-            "COVID Live Tracking Tool, Project developed in partnership between Cloudcafe Technologies and Coding Temple",
-            className="lead"
-        )
-    ], className="banner"
-)
+fig3.update_layout(height=600,
+                   margin=dict(l=0, r=0, t=10, b=30),
+                   plot_bgcolor='lightcyan')
+#Figure of Percent change in new cases by State
+fig4 = go.Figure(data=[go.Table(
+    header=dict(values=['<b>State</b>','<b>Confirmed Cases</b>',
+    '<b>% Change of New Daily Cases</b>'],
+                line_color='darkslategray',
+                fill_color='rgb(46, 162, 190)',
+                align='center',
+                font=dict(family='Montserrat', color='black', size=16)),
+    cells=dict(values=[state_trend['State'],
+                       state_trend.iloc[:,-1],
+                       state_trend['Percent Change']], # 2nd column
+               line_color='darkslategray',
+               fill_color=['lightcyan','lightcyan',
+               np.array(all_colors)[st_colors]],
+               align='center',
+               font=dict(family='Montserrat', color='black', size=20),
+               height=30))])
 
+fig4.update_layout(height=600,
+                   margin=dict(l=0, r=0, t=10, b=30),
+                )
 
-
-# app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 def App():
     layout = html.Div(children=[ # was app.layout
-    nav, 
-    banner,
-    #Global Card Start
-    html.Div(children=[
-        html.Div(children=[
-            # html.Img(src=app.get_asset_url('global_300x300.jpg')),
-            html.Div([
-                html.H5('Global Data'),
-                html.Div(children=[
-                    html.H4(children=['Confirmed Cases: ',
-                    format(confirmed[latest_date].sum(), ',d')]
-                    ),
-                    html.H4(children=[
-                    'New today: ',
-                    format(confirmed.iloc[:,-1].sum() - confirmed.iloc[:,-2].sum(), ',d'),
-                    ])
-                ]),
-                html.Div(children=[
-                    html.H4(children=['Deaths: ', 
-                    format(deaths[latest_date].sum(), ',d')]
-                    ),
-                    html.H4(children=[
-                    'New today: ',
-                    format(deaths.iloc[:,-1].sum() - deaths.iloc[:,-2].sum(), ',d'),
+        html.Div([
+        #Cards Start
+            html.Div(children=[
+            #Card 1
+                    html.H4('Global Confirmed Cases: '),
+                    html.H3(format(confirmed[latest_date].sum(), ',d')),
+                    html.H4('New today: '),
+                    html.H3(format(confirmed.iloc[:,-1].sum() - confirmed.iloc[:,-2].sum(), ',d')),
                     ],
-                    )
-                    ])
-                ],
-                className='container')],
             className='card'),
-        #Global Card End
-        #US Card Start
-        html.Div(children=[
-            # html.Img(src=app.get_asset_url('usa_flag_300x300.jpg')),
-            html.Div([
-                html.H5('US Data'),
-                html.Div(children=[
-                    html.H4(children=['Confirmed Cases: ',
-                    format(us_only_conf.iloc[0,-1], ',d')],
-                    ),
-                    html.H4(children=[
-                    'New today: ',
-                    format(us_only_conf.iloc[0,-1] - us_only_conf.iloc[0,-2], ',d'),
+            html.Div(children=[
+            #Card 2
+                    html.H4('Global Deaths: '),
+                    html.H3(format(deaths[latest_date].sum(), ',d')),
+                    html.H4('New today: '),
+                    html.H3(format(deaths.iloc[:,-1].sum() - deaths.iloc[:,-2].sum(), ',d'))
                     ],
-                    )
-                    ]),
-                html.Div(children=[
-                    html.H4(children=['Deaths: ', 
-                    format(us_only_deaths.iloc[0,-1], ',d')],
-                    ),
-                    html.H4(children=[
-                    'New today: ',
-                    format(us_only_deaths.iloc[0,-1] - us_only_deaths.iloc[0,-2], ',d'),
+            className='card'),
+            html.Div(children=[
+            #Card 3
+                    html.H4('US Confirmed Cases: '),
+                    html.H3(format(us_only_conf.iloc[0,-1], ',d')),
+                    html.H4('New today: '),
+                    html.H3(format(us_only_conf.iloc[0,-1] - us_only_conf.iloc[0,-2], ',d')),
                     ],
-                    )])
-                ], className='container')
-            ], className='card'
-            ),
-        #US Card End
-    ], className='row justify-content-center'),
+            className='card'),
+            html.Div(children=[
+            #Card 4
+                    html.H4('US Deaths: '),
+                    html.H3(format(us_only_deaths.iloc[0,-1], ',d')),
+                    html.H4('New today: '),
+                    html.H3(format(us_only_deaths.iloc[0,-1] - us_only_deaths.iloc[0,-2], ',d')),
+                    ],
+            className='card'),
+            ], className='row justify-content-center card-wrapper'),
+    #End all Cards
+
     dcc.Graph(id='COVID-19 Map',
             figure=fig),
     html.H3('Percentage of Populations Infected by Country'),
@@ -324,10 +297,6 @@ def App():
     dcc.Graph(figure=fig3),
     html.H3('Percentage of Populations Infected by US State'),
     dcc.Graph(figure=fig4),
-    html.Div(children='Footer', className='footer'),
     ])
 
     return layout
-
-# if __name__ == "__main__":
-#     app.run_server(debug=True)

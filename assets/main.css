@@ -2,9 +2,12 @@ body{
     background-color: white;
     font-family: Montserrat;
 }
-img{
-    width: 100%;
-    border-radius: 5px 5px 0 0;
+.logo-banner img, .logo-banner p {
+    display: inline-block;
+    margin-right: 1em;
+}
+.logo-banner{
+    background-color: aquamarine;
 }
 .footer{
     text-align: center;
@@ -24,7 +27,7 @@ h3 {
     margin: 0px;
     padding: 0px;
 }
-h5 {
+h5, h4 {
     text-align: center;
 }
 .card{
@@ -34,11 +37,27 @@ h5 {
     background-color: rgb(46, 162, 190);
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
-    width: 25%;
+    width: 20%;
+    margin-bottom: 3em;
 }
 .card:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
   }
 .container {
     padding: 2px 16px;
+}
+
+@media (max-width: 400px) {
+    .card{
+        width: 90%;
+    }
+}
+
+@media (max-width: 930px) {
+    .card{
+        width: 40%;
+        margin: 0.5em;
+        /* margin-left: 4em;
+        margin-bottom: 0.5em; */
+    }
 }
