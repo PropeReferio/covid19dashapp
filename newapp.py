@@ -54,7 +54,11 @@ def trend_colors(frame):
             else:
                 colors.append(19)
         else:
-            colors.append(int(frame.iloc[i]['Percent Change']//-10))
+            value = int(frame.iloc[i]['Percent Change']//-10)
+            if value <= 19:
+                colors.append(value)
+            else:
+                colors.append(19)
     return colors
 
 # State Data Cleaning Starts
