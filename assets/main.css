@@ -1,13 +1,53 @@
 body{
-    background-color: white;
+    background-color: black;
+    color: white;
     font-family: Montserrat;
+}
+.nav{
+    width: 100%;
+    background-color: rgb(56, 56, 56);
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: block;
+
+}
+li {
+    text-decoration: none;
+    float: left;
+    
+}
+li a {
+    display: block;
+    padding: 16px;
+    color: white;
+    font-size: 1.4em;
+    /* background-color: rgb(24, 24, 24); */
+}
+li a:hover{
+    background-color: rgb(24, 24, 24);
+    color: white;
+    text-decoration: none;
+}
+.about{
+    font-size: 130%;
+}
+.about div{
+    margin: 3em;
+}
+.about h3{
+    text-align: left;
+    font-weight: bolder;
+    margin: 1.5em 0em 0.7em;
 }
 .logo-banner img, .logo-banner p {
     display: inline-block;
     margin-right: 1em;
 }
 .logo-banner{
-    background-color: aquamarine;
+    background-color: rgb(46, 162, 190);
 }
 .footer{
     text-align: center;
@@ -27,7 +67,7 @@ h3 {
     margin: 0px;
     padding: 0px;
 }
-h5, h4 {
+h5{
     text-align: center;
 }
 .card{
@@ -35,14 +75,19 @@ h5, h4 {
     margin-bottom: 1em;
     margin-right: 3em;
     background-color: rgb(46, 162, 190);
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    /* box-shadow: 0 4px 8px 0 rgba(59, 59, 59, 0.397); */
     transition: 0.3s;
     width: 20%;
     margin-bottom: 3em;
 }
 .card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
+    /* box-shadow: 0 8px 16px 0 rgba(63, 63, 63, 0.7); */
+    transform: translate(-4px, -4px);
   }
+.card h3, .card h4{
+    text-align: left;
+    padding: 0.25em 0em 0.25em 0.6em;
+}
 .container {
     padding: 2px 16px;
 }

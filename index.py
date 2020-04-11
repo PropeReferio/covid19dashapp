@@ -22,7 +22,7 @@ def Logo():
                 html.Img(src=app.get_asset_url('logo.png'))
             ]
         ),
-        html.P('     COVID-19 Dashboard Powered by Scoreboard')
+        html.P('     COVID-19 Dashboard')
         ],
         className='logo-banner')
     return logo

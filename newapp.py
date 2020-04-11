@@ -38,27 +38,20 @@ names_column(recovered)
 #Colors by gradation for table values
 colors_flat = n_colors('rgb(168, 234, 250)', 'rgb(0, 68, 85)', 10, colortype='rgb')
 colors_steep = n_colors('rgb(255, 200, 200)', 'rgb(200, 0, 0)', 10, colortype='rgb')
-all_colors = colors_flat + colors_steep
+all_colors = colors_flat + colors_steep + ['white']
 
 def trend_colors(frame):
     '''Makes a list of indices that correspond to colors in all_colors
     which apply to tables'''
     colors = []
     for i in range(len(frame)):
-        if frame.iloc[i]['Percent Change'] == -100:
-            colors.append(9)
-        elif frame.iloc[i]['Percent Change'] >= 0:
-            value = int(frame.iloc[i]['Percent Change']//10)+10
-            if value <= 19:
-                colors.append(value)
-            else:
-                colors.append(19)
+        value = frame.iloc[i]['Percent Change']
+        if value > 0:
+            colors.append(min(19, int(value//10)+10))
+        elif value == 0:
+            colors.append(20)
         else:
-            value = int(frame.iloc[i]['Percent Change']//-10)
-            if value <= 9:
-                colors.append(value)
-            else:
-                colors.append(9)
+            colors.append(min([9, int(value//-10)]))
     return colors
 
 # State Data Cleaning Starts
@@ -163,6 +156,9 @@ fig.update_layout(
     autosize=True,
     # width=1800,
     # height=1200,
+    font=dict(
+        color='white',
+    ),
     margin=dict(
         l=4,
         r=0,
@@ -172,21 +168,22 @@ fig.update_layout(
     ),
     title_text='Confirmed Cases by State',
     title={
-        'y':0.95,
-        'x':0.5,
+        'y':1.0,
+        'x':0.46,
         'xanchor': 'center',
         'yanchor': 'top'
         },
     titlefont=dict(
         family='Montserrat',
         size=26,
-        color='#7f7f7f'
     ),
     geo = dict(
         scope='usa',
         projection=go.layout.geo.Projection(type = 'albers usa'),
         showlakes=True, # lakes
         lakecolor='rgb(255, 255, 255)'),
+    paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(0,0,0,0)'
 )
 
 fig2 = go.Figure(data=[go.Table(
@@ -210,6 +207,8 @@ fig2 = go.Figure(data=[go.Table(
 fig2.update_layout(
     height=600,
     margin=dict(l=0, r=0, t=10, b=30),
+    paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(0,0,0,0)'
     )
 #Figure of Percent change in new cases by Nation
 fig3 = go.Figure(data=[go.Table(
@@ -231,7 +230,8 @@ fig3 = go.Figure(data=[go.Table(
 
 fig3.update_layout(height=600,
                    margin=dict(l=0, r=0, t=10, b=30),
-                   plot_bgcolor='lightcyan')
+                   paper_bgcolor='rgba(0,0,0,0)',
+                   plot_bgcolor='rgba(0,0,0,0)')
 #Figure of Percent change in new cases by State
 fig4 = go.Figure(data=[go.Table(
     header=dict(values=['<b>State</b>','<b>Confirmed Cases</b>',
@@ -252,6 +252,8 @@ fig4 = go.Figure(data=[go.Table(
 
 fig4.update_layout(height=600,
                    margin=dict(l=0, r=0, t=10, b=30),
+                   paper_bgcolor='rgba(0,0,0,0)',
+                   plot_bgcolor='rgba(0,0,0,0)'
                 )
 
 def App():

@@ -40,5 +40,6 @@ body = html.Div([
 
 def AboutPage():
     layout = html.Div([
-    body])
+    body],
+    className='about')
     return layout
