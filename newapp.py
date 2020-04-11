@@ -185,6 +185,9 @@ fig.update_layout(
     paper_bgcolor='rgba(0,0,0,0)',
     plot_bgcolor='rgba(0,0,0,0)'
 )
+fig.update_geos(
+    bgcolor='black',
+)
 
 fig2 = go.Figure(data=[go.Table(
     header=dict(values=['<b>Country/Region</b>','<b>Confirmed Cases</b>',
@@ -296,7 +299,10 @@ def App():
     #End all Cards
 
     dcc.Graph(id='COVID-19 Map',
-            figure=fig),
+            figure=fig,
+            config=dict(
+                scrollZoom=False
+            )),
     html.H3('Percentage of Populations Infected by Country'),
     dcc.Graph(figure=fig2),
     html.H3('Percentage Change in New Daily Cases by Country'),
