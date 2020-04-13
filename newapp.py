@@ -305,9 +305,9 @@ def App():
             )),
     html.H3('Percentage of Populations Infected by Country'),
     dcc.Graph(figure=fig2),
-    html.H3('Percentage Change in New Daily Cases by Country'),
+    html.H3('Percent Change in New Daily Cases by Country'),
     dcc.Graph(figure=fig3),
-    html.H3('Percentage of Populations Infected by US State'),
+    html.H3('Percent Change in New Daily Cases by US State'),
     dcc.Graph(figure=fig4),
     ])
 

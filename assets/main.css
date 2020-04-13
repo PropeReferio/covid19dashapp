@@ -7,26 +7,26 @@ body{
     width: 100%;
     background-color: rgb(56, 56, 56);
 }
-ul {
+.nav ul {
     list-style-type: none;
     padding: 0;
     margin: 0;
     display: block;
 
 }
-li {
+.nav li {
     text-decoration: none;
     float: left;
     
 }
-li a {
+.nav li a {
     display: block;
     padding: 16px;
     color: white;
     font-size: 1.4em;
     /* background-color: rgb(24, 24, 24); */
 }
-li a:hover{
+.nav li a:hover{
     background-color: rgb(24, 24, 24);
     color: white;
     text-decoration: none;

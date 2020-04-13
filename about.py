@@ -4,38 +4,53 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 body = html.Div([
-    html.H1('Fundraiser: Supplying PPE for Frontline Healthcare Professionals'),
-    html.H3('Overview'),
-    html.P(['Our teams at Cloudcafe and Coding Temple are raising funds here to donate directly to the following campaign: ',
-    html.A('PPE for Frontline Healthcare Professionals', href='https://www.gofundme.com/f/ppe-for-frontline-healthcare-professionals',
-        target='blank', rel='noopener')]),
-    html.P(['This fundraiser has been organized by Sonny Tai, the CEO of ',
-    html.A('Actuate AI', href='https://actuate.ai/',
-        target='blank', rel='noopener'),
-        '. Sonny is a former Marine and University of Chicago Booth grad. He describes his mission for his fundraiser as the following:']),
-    html.Blockquote([
-        html.P('"Healthcare workers are the front line fighters against the COVID-19 pandemic. However, they are now facing desperate shortages of Personal Protective Equipment (PPE) nationwide.'),
-        html.P('President John F. Kennedy famously said: "Ask not what your country can do for you, ask what you can do for your country". My friends - if there was ever a point in our lifetimes that required national mobilization, for every single American to do their part, that time is now. Our actions may be small and insignificant, but seemingly small and insignificant efforts multiplied by 320 million can move mountains.'),
-        html.P('We are a team of regular, passionate Americans who believe that we can help to move mountains. We may not be doctors and nurses, but we\'ve heard the outcry from healthcare professionals across the country, and they\'ve made it quite clear what they need."'),
+    html.H1('About this project'),
+    html.P(['This dashboard is updated daily to show updates in the COVID-19 pandemic. This project was designed and deployed as a partnered effort between two Chicago-based companies, ',
+        html.A('Cloudcafe Technologies', href='https://cloudcafe.io/',
+            target='_blank', rel='noopener'),
+            ' and ',
+        html.A('Coding Temple', href='https://codingtemple.com/',
+            target='_blank', rel='noopener'),
+            '.'
+        ]),
+    html.H1('Motivation for the Project'),
+    html.P('There are already many COVID-19 dashboards online and our teams at Cloudcafe and Coding Temple decided to add another. So what makes our project different? We developed our dashboard as another informational resource for the community, along with highlighting data which we have not seen present in others (i.e. active cases as a % of total population).'),
+    html.P('More importantly, this website is used to drive fundraising for organizations and individuals who are on the frontlines fighting this pandemic. 100% of all funds raised here go directly towards the fight. Learn more about our current fundraising partner\'s mission and donate here.'),
+    html.H1('Data Sources'),
+    html.Ul([
+        html.Li(html.A('Johns Hopkins CSSE', href='https://github.com/CSSEGISandData/COVID-19',
+        target='_blank', rel='noopener')),
+        html.Li(html.A('World Health Organization', href='https://www.who.int/',
+        target='_blank', rel='noopener'))
     ]),
-    html.H3('Plan of Action'),
-    html.P(['1. Identify and collect quotes from suppliers that can manufacture high quality N-95 masks and ship to the United States in a cost-effective manner. ',
-        html.Strong("Sonny's team has identified a primary supplier and will be placing their first order on Monday, April 13th.")
-    ]),
-    html.P(['2. Identify hospitals that have the most urgent need for PPE. One of the resources we will use to identify these hospitals is the list from #GetUsPPE.org. ',
-        html.Strong("Sonny's team has coordinated with multiple hospitals who are in urgent need and they will receive N95 masks from this initial order.")
-    ]),
-    html.P(['3. Purchase the PPE and ship it to the hospitals. ',
-        html.Strong("First shipment order is being placed this Monday, April 13th. ")
-    ]),
-    html.P('The fundraiser operates completely on a non-profit basis and is committed to complete transparency, which means that:',
-    style={'text-decoration': 'underline'}),
-    html.P('1. We will track spending and upload invoices for all of our purchases, and any left over funds will be donated to a to-be-designated 501(c)3 charity that helps those impacted by COVID-19.'),
-    html.P('2. None of us who are involved in this campaign will draw a salary from the campaign or appropriate any of its funds for personal use.'),
-    html.P('3. The email addresses, phone numbers, and LinkedIn profiles for all of the campaign\'s organizers will be posted on the GoFundMe to ensure accountability.'),
-
-
-
+    html.H1('Resources for the community'),
+    html.Ul([
+        html.Li(['COVID-19 testing data: ',
+            html.A('https://ourworldindata.org/covid-testing',
+            href='https://ourworldindata.org/covid-testing',
+            target='_blank', rel='noopener')]),
+        html.Li(['Symptoms checker: ',
+            html.A('https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/testing.html',
+            href='https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/testing.html',
+            target='_blank', rel='noopener')]),
+        html.Li(['Find COVID-19 testing near you: ',
+            html.A('https://findcoronatest.com/',
+            href='https://findcoronatest.com/',
+            target='_blank', rel='noopener')]),
+        html.Li(['Comprehensive guide to financial support: ',
+            html.A('https://www.possiblefinance.com/blog/covid-financial-support/',
+            href='https://www.possiblefinance.com/blog/covid-financial-support/',
+            target='_blank', rel='noopener')]),
+        html.Li(['Safety Guide: ',
+            html.A('https://www.redcross.org/about-us/news-and-events/news/2020/coronavirus-safety-and-readiness-tips-for-you.html',
+            href='https://www.redcross.org/about-us/news-and-events/news/2020/coronavirus-safety-and-readiness-tips-for-you.html',
+            target='_blank', rel='noopener')])
+        ]),
+    html.H1('Any bugs or enhancement requests?'),
+    html.P('You may directly contact Arjun Srivastava (arjun@cloudcafe.io) or Ripal Patel (ripalp@codingtemple.com).'),
+    html.H1('Developer'),
+    html.A('Bo Stevens', href='https://www.linkedin.com/in/bostevens-softwareengineer/',
+    target='_blank', rel='noopener')
 ])
 
 def AboutPage():
