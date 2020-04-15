@@ -9,6 +9,6 @@
 2. Percent change in new daily cases, at the national and US state level
 3. Confirmed cases as a percentage of national population
 
-![Screenshot of Application at Work](/dash-screenshot.jpg "A look at the application at work")
+![Screenshot of Application at Work](/dash-screenshot.png "A look at the application at work")
 
 
