@@ -17,8 +17,9 @@ confirmed = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-
 deaths = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
 recovered = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv')
 global_pop = pd.read_csv('population_by_country_2020.csv')
-latest_date = confirmed.columns[-1]
-
+latest_date_conf = confirmed.columns[-1]
+latest_date_recov = recovered.columns[-1]
+latest_date_deaths = deaths.columns[-1]
 
 
 def names_column(frame):
@@ -57,6 +58,8 @@ def trend_colors(frame):
 # State Data Cleaning Starts
 state_conf = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv')
 state_deaths = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv')
+latest_date_state_conf = state_conf.columns[-1]
+latest_date_state_deaths = state_deaths.columns[-1]
 state_list = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado",
   "Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois",
   "Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland",
@@ -71,7 +74,7 @@ for state in state_list:
     new_row = {'State': state,
                state_deaths.columns[-1]: state_deaths[state_deaths['Province_State'] == state].iloc[:,-1].sum()}
     clean_state_deaths = clean_state_deaths.append(new_row, ignore_index=True)
-state_text = [clean_state_deaths['State'][i] + '<br>' + str(clean_state_deaths.iloc[i][-1]) + ' Deaths' for i in range(50)]
+state_text = [clean_state_deaths['State'][i] + '<br>' + str(f'{clean_state_deaths.iloc[i][-1]:,}') + ' Deaths' for i in range(50)]
 # Above is the text that goes into the map tooltip
 
 state_codes = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", 
@@ -93,7 +96,7 @@ clean_state_conf.insert(0, 'new_latest', clean_state_conf.iloc[:,-1] - clean_sta
 clean_state_conf.insert(0, 'new_second_latest', clean_state_conf.iloc[:,-2] - clean_state_conf.iloc[:,-3])
 state_map = clean_state_conf # Data for MAP is cleaned no further beyond this line.
 state_trend = clean_state_conf[clean_state_conf['new_second_latest'] > 0]
-state_trend[latest_date] = state_trend.apply(lambda x: "{:,}".format(x[latest_date]), axis=1)
+state_trend[latest_date_state_conf] = state_trend.apply(lambda x: "{:,}".format(x[latest_date_state_conf]), axis=1)
 state_trend.insert(0, 'Percent Change', (state_trend['new_latest'] / state_trend['new_second_latest'] - 1) * 100)
 state_trend = state_trend.sort_values(by=['Percent Change'])
 st_colors = trend_colors(state_trend)
@@ -113,26 +116,26 @@ def new_cases_columns(frame): #Makes 2 columns of new cases
 
 new_cases_columns(confirmed)
 new_cases_columns(deaths)
-global_trends = confirmed[confirmed[latest_date] > 1000][['Name', 'Percent Change', latest_date]].dropna().sort_values(by='Percent Change')
+global_trends = confirmed[confirmed[latest_date_conf] > 1000][['Name', 'Percent Change', latest_date_conf]].dropna().sort_values(by='Percent Change')
 global_trends = global_trends[global_trends['Percent Change'].between(-100,100, inclusive=False)]
 #This adds commas to data
-global_trends[latest_date] = global_trends.apply(lambda x: "{:,}".format(x[latest_date]), axis=1)
+global_trends[latest_date_conf] = global_trends.apply(lambda x: "{:,}".format(x[latest_date_conf]), axis=1)
 #Add table colors before adding percent sign:
 
 gt_colors = trend_colors(global_trends)
 global_trends['Percent Change'] = global_trends['Percent Change'].astype(str) + '%'
-flattening_curve = confirmed[confirmed[latest_date]>1000].sort_values(by=['Percent Change'])[['Name','Percent Change']]
+flattening_curve = confirmed[confirmed[latest_date_conf]>1000].sort_values(by=['Percent Change'])[['Name','Percent Change']]
 #This adds commas to data: 
-recovered[latest_date] = recovered.apply(lambda x: "{:,}".format(x[latest_date]), axis=1)
-conf_recov = confirmed.join(recovered.set_index('Name')[latest_date],
-on=['Name'], rsuffix='_recoveries').sort_values(by=latest_date,
+recovered[latest_date_recov] = recovered.apply(lambda x: "{:,}".format(x[latest_date_recov]), axis=1)
+conf_recov = confirmed.join(recovered.set_index('Name')[latest_date_recov],
+on=['Name'], rsuffix='_recoveries').sort_values(by=latest_date_conf,
 ascending=False)
 #This adds commas to data: 
-conf_recov[latest_date] = conf_recov.apply(lambda x: "{:,}".format(x[latest_date]), axis=1)
-# conf_recov[latest_date+'_recoveries'] = conf_recov.apply(lambda x: "{:,}".format(x[latest_date+'_recoveries']), axis=1)
+conf_recov[latest_date_conf] = conf_recov.apply(lambda x: "{:,}".format(x[latest_date_conf]), axis=1)
+
 conf_pop = confirmed.join(global_pop.set_index('Country')['Population'],
-on=['Name']).sort_values(by=latest_date, ascending=False)
-conf_pop['Percent Infected'] = round(conf_pop[latest_date]/conf_pop['Population']*100, 3)
+on=['Name']).sort_values(by=latest_date_conf, ascending=False)
+conf_pop['Percent Infected'] = round(conf_pop[latest_date_conf]/conf_pop['Population']*100, 3)
 conf_pop = conf_pop[conf_pop['Percent Infected'] > 0]
 conf_pop['Percent Infected'] = conf_pop['Percent Infected'].astype(str) + '%'
 # df['Percent'] = df['Grade'].astype(str) + '%'
@@ -142,7 +145,7 @@ us_only_deaths = deaths[deaths['Name'] == 'US']
 #US Chloropleth Map a
 fig = go.Figure(data=go.Choropleth(
     locations=state_codes,
-    z=state_map[latest_date].astype(float), # The column that color codes
+    z=state_map[latest_date_state_conf].astype(float), # The column that color codes
     locationmode='USA-states',
     colorscale='Reds',
     autocolorscale=False,
@@ -197,8 +200,8 @@ fig2 = go.Figure(data=[go.Table(
                 align='center',
                 font=dict(family='Montserrat', color='black', size=16)),
     cells=dict(values=[conf_recov['Name'],
-                       conf_recov[latest_date], # 1st column
-                       conf_recov[latest_date+'_recoveries'],
+                       conf_recov[latest_date_conf], # 1st column
+                       conf_recov[latest_date_conf+'_recoveries'],
                        conf_pop['Percent Infected']],
                line_color='darkslategray',
                fill_color=['lightcyan','lightcyan','lightcyan','lightcyan'],
@@ -266,7 +269,7 @@ def App():
             html.Div(children=[
             #Card 1
                     html.H4('Global Confirmed Cases: '),
-                    html.H3(format(confirmed[latest_date].sum(), ',d')),
+                    html.H3(format(confirmed[latest_date_conf].sum(), ',d')),
                     html.H4('New today: '),
                     html.H3(format(confirmed.iloc[:,-1].sum() - confirmed.iloc[:,-2].sum(), ',d')),
                     ],
@@ -274,7 +277,7 @@ def App():
             html.Div(children=[
             #Card 2
                     html.H4('Global Deaths: '),
-                    html.H3(format(deaths[latest_date].sum(), ',d')),
+                    html.H3(format(deaths[latest_date_deaths].sum(), ',d')),
                     html.H4('New today: '),
                     html.H3(format(deaths.iloc[:,-1].sum() - deaths.iloc[:,-2].sum(), ',d'))
                     ],
