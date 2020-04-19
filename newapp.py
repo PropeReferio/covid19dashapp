@@ -184,7 +184,7 @@ fig.update_layout(
         scope='usa',
         projection=go.layout.geo.Projection(type = 'albers usa'),
         showlakes=True, # lakes
-        lakecolor='rgb(255, 255, 255)'),
+        lakecolor='rgb(46, 162, 190)'),
     paper_bgcolor='rgba(0,0,0,0)',
     plot_bgcolor='rgba(0,0,0,0)'
 )
