@@ -194,7 +194,7 @@ fig.update_geos(
 
 fig2 = go.Figure(data=[go.Table(
     header=dict(values=['<b>Country/Region</b>','<b>Confirmed Cases</b>',
-     '<b>Recoveries</b>', '<b>% of Total Population Infected</b>'],
+     '<b>Recoveries</b>', '<b>% of Total Population</b>'],
                 line_color='darkslategray',
                 fill_color='rgb(46, 162, 190)',
                 align='center',
@@ -306,7 +306,7 @@ def App():
             config=dict(
                 scrollZoom=False
             )),
-    html.H3('Percentage of Populations Infected by Country'),
+    html.H3('Confirmed Cases per Capita by Country'),
     dcc.Graph(figure=fig2),
     html.H3('Percent Change in New Daily Cases by Country'),
     dcc.Graph(figure=fig3),
